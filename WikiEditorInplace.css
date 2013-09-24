@@ -1,0 +1,39 @@
+#wei-form-sample {
+    display : none;
+}
+.wei-block {
+    display: block;
+    position: relative;
+    margin: 10px 0;
+    border-top: 1px solid #AAAAAA;
+    border-bottom: 1px solid #AAAAAA;
+    text-align: center;
+    padding: 0;
+}
+
+.wei-block > div {
+    display: inline-block;
+    width: 47%;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.wei-block .wei-editor-block {
+    padding-left: 0;
+    border-right: 1px solid #AAAAAA;
+}
+
+.wei-block .wei-editor-block textarea {
+    width: 100%;
+    clear : both;
+}
+
+.wei-block .wei-editor-block .wei-editor-buttons {
+    text-align: left;
+    margin: 10px 0;
+}
+
+.wei-block .wei-preview-block {
+    padding-right: 0;
+}
+
