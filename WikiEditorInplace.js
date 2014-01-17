@@ -1,17 +1,18 @@
-$(document).ready(function(){
-    $('.editsection > a').click(function(e){
+$(document).ready(function()
+{
+    $('.editsection > a').click(function(e)
+    {
         var href = $(this).attr('href');
         var section = href.substr(href.indexOf('section=') + 'section='.length);
         section = section.indexOf('&') > 0 ? section.substr(0, section.indexOf('&')) : section;
         $.ajax({
             type: "POST",
             url: mw.util.wikiScript(),
-            data:
-                {
-                    action:'ajax',
-                    rs:'WikiEditorInplace::Ajax',
-                    rsargs:[wgPageName, section]
-                },
+            data: {
+                action: 'ajax',
+                rs: 'WikiEditorInplace::Ajax',
+                rsargs: [ wgPageName, section ]
+            },
             dataType: 'json',
             success: function(result)
             {
@@ -23,26 +24,29 @@ $(document).ready(function(){
 });
 
 window.InplaceEditor = {
-    context : null,
-    restoreAll : function()
+    context: null,
+    restoreAll: function()
     {
-        $('div.InplaceEditorHTMLHolder').each(function(){
+        $('div.InplaceEditorHTMLHolder').each(function()
+        {
             var $div = $(this);
             $div.next().remove();
             var $current = null;
             var $prev = $div;
-            $div.children().each(function(){
+            $div.children().each(function() {
                 $current = $(this);
                 $prev.after($current);
                 $prev = $current;
             });
             $div.remove();
         });
+        return false;
     },
-    preview : function()
+    preview: function()
     {
-        $('.wei-preview-block > div').show();
-        $('#editform .wikiEditor-ui-controls .wikiEditor-ui-tabs > div').each(function(){
+        $('.wei-block').addClass('wei-preview-visible');
+        $('#editform .wikiEditor-ui-controls .wikiEditor-ui-tabs > div').each(function()
+        {
             if ($(this).attr('rel') === 'wikiEditor-ui-view-preview')
             {
                 $(this).children('a').click();
@@ -52,23 +56,26 @@ window.InplaceEditor = {
         });
         return false;
     },
-    addModule : {
-        toolbar : function() {
-            $( '#toolbar' ).remove();
-            $( 'textarea#wpTextbox1' ).wikiEditor(
+    addModule: {
+        toolbar: function()
+        {
+            $('#toolbar').remove();
+            $('textarea#wpTextbox1').wikiEditor(
                 'addModule', $.wikiEditor.modules.toolbar.config.getDefaultConfig()
             );
         },
-        other : function(name){
-            $( 'textarea#wpTextbox1' ).wikiEditor( 'addModule', name );
+        other: function(name)
+        {
+            $('textarea#wpTextbox1').wikiEditor('addModule', name);
         }
     },
-    showForm : function (result)
+    showForm: function (result)
     {
         window.InplaceEditor.restoreAll();
         var $div = $('<div></div>');
         var $first = null;
-        $('span.mw-headline').each (function(){
+        $('span.mw-headline').each(function()
+        {
             if (this.id == result.from)
             {
                 $first = $(this).parent();
@@ -92,10 +99,10 @@ window.InplaceEditor = {
         var $editor = $('<div></div>');
         $div.after($editor);
         $editor.addClass('wei-block');
-        $editor.html($('#wei-form-sample').html());
+        $editor.html($('#wei-form-origin').html());
         $editor.children('a').first().attr('id', 'link' + result.from);
         window.location.hash = '#link' + result.from;
-        
+
         var $form = $editor.find('form');
         var $input = '<input type="hidden" name="wpSection" value="'+result.section+'"/>';
         $form.append($input);
@@ -103,14 +110,13 @@ window.InplaceEditor = {
         $form.append($input);
         $input = '<input type="hidden" name="wpEdittime" value="'+result.edittime+'"/>';
         $form.append($input);
-        
-        
         $form.attr('id', 'editform');
         $form.attr('action', result.formAction);
+
         $editor.find('textarea').text(result.text);
         $editor.find('textarea').attr('id', 'wpTextbox1');
         $editor.find('input[type=submit]').attr('id', 'wpSave');
-        var showForm = function ()
+        var showForm = function()
         {
             for (var i in window.InplaceEditor.context.modules)
             {
@@ -133,10 +139,12 @@ window.InplaceEditor = {
             $('.wei-preview-block').html('');
             var $preview = $('#editform .wikiEditor-ui-view.wikiEditor-ui-view-preview');
             $('.wei-preview-block').append($preview);
+            $preview.css({ display: '' });
         };
         if (window.InplaceEditor.context === null)
         {
-            mw.loader.using( result.modules, function(){
+            mw.loader.using(result.modules, function()
+            {
                 if (window.InplaceEditor.context === null)
                 {
                     window.InplaceEditor.context = $('#wpTextbox1').data('wikiEditor-context');
@@ -155,4 +163,3 @@ window.InplaceEditor = {
         }
     }
 };
-

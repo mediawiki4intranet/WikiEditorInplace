@@ -2,73 +2,14 @@
 
 class WikiEditorInplace
 {
-    
-	/* COPY_PASTE FROM WikiEditorHooks */
-	protected static $features = array(
-		'toolbar' => array(
-			'modules' => array(
-				'ext.wikiEditor.toolbar',
-			),
-		),
-		'dialogs' => array(
-			'modules' => array(
-				'ext.wikiEditor.dialogs',
-			),
-		),
-		'hidesig' => array(
-			'modules' => array(
-				'ext.wikiEditor.toolbar.hideSig',
-			),
-		),
-		'templateEditor' => array(
-			'modules' => array(
-				'ext.wikiEditor.templateEditor',
-			),
-		),
-		'templates' => array(
-			'modules' => array(
-				'ext.wikiEditor.templates',
-			),
-		),
-		'preview' => array(
-			'modules' => array(
-				'ext.wikiEditor.preview',
-			),
-		),
-		'previewDialog' => array(
-			'modules' => array(
-				'ext.wikiEditor.previewDialog',
-			),
-		),
-		'publish' => array(
-			'modules' => array(
-				'ext.wikiEditor.publish',
-			),
-		),
-		'toc' => array(
-			'modules' => array(
-				'ext.wikiEditor.toc',
-			),
-		),
-	);
-    
     public static function getFeaturesModulesList()
     {
-        $result = array();
-		foreach ( self::$features as $name => $feature ) {
-			if ( isset( $feature['modules'] ) && WikiEditorHooks::isEnabled( $name ) ) {
-                foreach ( $feature['modules'] as $m ) {
-                    if ( !in_array($m, $result) ) {
-                        $result[] = $m;
-                    }
-                }
-			}
-		}
-        return $result;
+        global $wgOut;
+        WikiEditorHooks::editPageShowEditFormInitial($toolbar);
+        return $wgOut->getModules();
     }
-    
+
     /**
-     * 
      * @global User $wgUser
      * @param Article $article
      * @param type $outputDone
@@ -81,13 +22,12 @@ class WikiEditorInplace
         if ($title->userCan('edit'))
         {
             $wgOut->addModules('WikiEditorInplace');
-            
             $submit = wfMsg('savearticle');
             $preview = wfMsg('showpreview');
             $cancel = wfMsg('wei-cancel');
 
             $wgOut->addHtml(<<<HTML
-<div id="wei-form-sample" class="wei-block">
+<div id="wei-form-origin">
     <a id=""></a>
     <div class="wei-editor-block">
         <div>
@@ -101,19 +41,19 @@ class WikiEditorInplace
             </form>
         </div>
     </div>
-    <div class="wei-preview-block">
-    </div>
+    <div class="wei-preview-block"></div>
+    <div style="clear: both"></div>
 </div>
 HTML
             );
         }
         return true;
     }
-    
+
     public static function Ajax($pagename, $sectionIdx)
     {
         global $wgUser;
-		$title = Title::newFromText($pagename);
+        $title = Title::newFromText($pagename);
         $result = array();
         if ($title->userCan('edit'))
         {
@@ -162,6 +102,4 @@ HTML
         }
         return json_encode($result);
     }
-    
-    
 }
