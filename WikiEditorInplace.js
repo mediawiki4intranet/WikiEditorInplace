@@ -3,8 +3,13 @@ $(document).ready(function()
     $('.editsection > a').click(function(e)
     {
         var href = $(this).attr('href');
-        var section = href.substr(href.indexOf('section=') + 'section='.length);
-        section = section.indexOf('&') > 0 ? section.substr(0, section.indexOf('&')) : section;
+        // skip inplace editing for sections included from templates, like T-(\d+)
+        var section = /section=(\d+)/.exec(href);
+        if (!section)
+        {
+            return true;
+        }
+        section = section[1];
         $.ajax({
             type: "POST",
             url: mw.util.wikiScript(),
