@@ -1,3 +1,7 @@
+// In-place page section editing for MediaWiki & WikiEditor
+// License: Mozilla Public License 2.0 or later
+// Author(s): Vladimir Koptev, Vitaliy Filippov
+
 $(document).ready(function()
 {
     $('.editsection > a').click(function(e)
