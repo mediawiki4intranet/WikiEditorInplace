@@ -12,4 +12,5 @@ $wgExtensionMessagesFiles['WikiEditorInplace'] = dirname(__FILE__).'/WikiEditorI
 $wgAutoloadClasses['WikiEditorInplace'] = dirname( __FILE__ ) . '/WikiEditorInplace.hooks.php';
 
 $wgHooks['ArticleViewHeader'][] = 'WikiEditorInplace::ArticleViewHeader';
+$wgHooks['GetPreferences'][] = 'WikiEditorInplace::GetPreferences';
 $wgAjaxExportList[] = 'WikiEditorInplace::Ajax';

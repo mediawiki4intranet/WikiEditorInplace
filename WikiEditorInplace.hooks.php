@@ -2,6 +2,16 @@
 
 class WikiEditorInplace
 {
+    public static function getPreferences($user, &$prefs)
+    {
+        $prefs['wikieditor-inplace'] = array(
+            'type' => 'toggle',
+            'label-message' => 'wei-enable',
+            'section' => 'editing/beta',
+        );
+        return true;
+    }
+
     public static function getFeaturesModulesList()
     {
         global $wgOut;
@@ -17,9 +27,9 @@ class WikiEditorInplace
      */
     public static function ArticleViewHeader(&$article, &$outputDone, &$pcache)
     {
-        global $wgOut;
+        global $wgOut, $wgUser;
         $title = $article->getTitle();
-        if ($title->userCan('edit'))
+        if ($title->userCan('edit') && $wgUser->getOption('wikieditor-inplace'))
         {
             $wgOut->addModules('WikiEditorInplace');
             $submit = wfMsg('savearticle');
