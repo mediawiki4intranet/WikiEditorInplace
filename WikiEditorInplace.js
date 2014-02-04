@@ -4,16 +4,13 @@
 
 $(document).ready(function()
 {
-    $('.editsection > a').click(function(e)
+    function loadInplace(section)
     {
-        var href = $(this).attr('href');
-        // skip inplace editing for sections included from templates, like T-(\d+)
-        var section = /section=(\d+)/.exec(href);
-        if (!section)
+        if (document.getElementById('wei-'+section))
         {
-            return true;
+            // To prevent double loading via #hash
+            return;
         }
-        section = section[1];
         $.ajax({
             type: "POST",
             url: mw.util.wikiScript(),
@@ -26,10 +23,38 @@ $(document).ready(function()
             success: function(result)
             {
                 window.InplaceEditor.showForm(result);
+                loading = null;
             }
         });
+    }
+    $('.editsection > a').click(function(e)
+    {
+        var href = $(this).attr('href');
+        // skip inplace editing for sections included from templates, like T-(\d+)
+        var section = /section=(\d+)/.exec(href);
+        if (!section)
+        {
+            return true;
+        }
+        loadInplace(section[1]);
         return false;
     });
+    // Support switching inplace editing on/off via back/next links
+    if ('onhashchange' in window && (document.documentMode === undefined || document.documentMode >= 8))
+    {
+        $(window).on('hashchange', function()
+        {
+            var m = window.location.hash.match(/^#wei-([1-9]\d*)/)
+            if (m)
+            {
+                loadInplace(m[1]);
+            }
+            else
+            {
+                window.InplaceEditor.restoreAll();
+            }
+        });
+    }
 });
 
 window.InplaceEditor = {
@@ -109,8 +134,8 @@ window.InplaceEditor = {
         $div.after($editor);
         $editor.addClass('wei-block');
         $editor.html($('#wei-form-origin').html());
-        $editor.children('a').first().attr('id', 'link' + result.from);
-        window.location.hash = '#link' + result.from;
+        $editor.children('a').first().attr('id', 'wei-' + result.section);
+        window.location.hash = '#wei-' + result.section;
 
         var $form = $editor.find('form');
         var $input = '<input type="hidden" name="wpSection" value="'+result.section+'"/>';
