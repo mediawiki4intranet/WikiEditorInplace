@@ -67,10 +67,10 @@ HTML
         $result = array();
         if ($title->userCan('edit'))
         {
-            $article = Article::newFromID($title->getArticleID());
+            $article = new WikiPage($title);
             $section = null;
             $nextSection = null;
-            foreach ($article->getParserOutput()->getSections() as $s)
+            foreach (($article->exists() ? $article->getParserOutput(new ParserOptions)->getSections() : array()) as $s)
             {
                 if ($section != null && $s['level'] <= $section['level'])
                 {
@@ -83,21 +83,14 @@ HTML
                 }
             }
 
-            $text = mb_substr($article->getContent(), $section['byteoffset']);
-            if ($nextSection != null)
+            $text = mb_substr($article->getText(), $section['byteoffset']);
+            if ($nextSection !== null)
             {
                 $text = mb_substr ($text, 0, $nextSection['byteoffset'] - $section['byteoffset']);
             }
-            $from = urlencode($section['line']);
-            $from = str_replace('%', '.', $from);
-            $from = str_replace('+', '_', $from);
+            $from = Sanitizer::escapeId($section['line'], array('noninitial'));
 
-            $to = ($nextSection == null ? null : urlencode($nextSection['line']));
-            if ($to)
-            {
-                $to = str_replace('%', '.', $to);
-                $to = str_replace('+', '_', $to);
-            }
+            $to = ($nextSection === null ? null : Sanitizer::escapeId($nextSection['line'], array('noninitial')));
 
             $result = array(
                 'text' => $text,
