@@ -4,16 +4,16 @@
 
 $(document).ready(function()
 {
-    $('.editsection > a').click(function(e)
+    $('.editsection a, #ca-edit a').live('click', function(e)
     {
         var href = $(this).attr('href');
-        // skip inplace editing for sections included from templates, like T-(\d+)
-        var section = /section=(\d+)/.exec(href);
-        if (!section)
+        var section = /section=(T-)?(\d+)/.exec(href);
+        if (section && section[1])
         {
+            // skip inplace editing for sections included from templates, like T-(\d+)
             return true;
         }
-        section = section[1];
+        section = section ? section[2] : '';
         $.ajax({
             type: "POST",
             url: mw.util.wikiScript(),
@@ -83,13 +83,27 @@ window.InplaceEditor = {
         window.InplaceEditor.restoreAll();
         var $div = $('<div></div>');
         var $first = null;
-        $('span.mw-headline').each(function()
+        var $current;
+        if (result.section === null)
         {
-            if (this.id == result.from)
+            // Edit whole page
+            $first = $('#bodyContent');
+        }
+        else if (!result.section)
+        {
+            // Edit zero section
+            $first = $('span.mw-headline[id="'+result.to+'"]').parent().prev();
+        }
+        else
+        {
+            $('span.mw-headline').each(function()
             {
-                $first = $(this).parent();
-            }
-        });
+                if (this.id == result.from)
+                {
+                    $first = $(this).parent();
+                }
+            });
+        }
         $first.before($div);
         $div.hide();
         $div.attr('id', 'block_' + result.from);
@@ -113,8 +127,11 @@ window.InplaceEditor = {
         window.location.hash = '#link' + result.from;
 
         var $form = $editor.find('form');
-        var $input = '<input type="hidden" name="wpSection" value="'+result.section+'"/>';
-        $form.append($input);
+        if (result.section !== null)
+        {
+            var $input = '<input type="hidden" name="wpSection" value="'+result.section+'"/>';
+            $form.append($input);
+        }
         $input = '<input type="hidden" name="wpEditToken" value="'+result.token+'"/>';
         $form.append($input);
         $input = '<input type="hidden" name="wpEdittime" value="'+result.edittime+'"/>';

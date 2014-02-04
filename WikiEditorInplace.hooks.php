@@ -67,12 +67,16 @@ HTML
         $result = array();
         if ($title->userCan('edit'))
         {
-            $article = Article::newFromID($title->getArticleID());
+            $article = new WikiPage($title);
             $section = null;
-            $nextSection = null;
-            foreach ($article->getParserOutput()->getSections() as $s)
+            if ($sectionIdx === '0')
             {
-                if ($section != null && $s['level'] <= $section['level'])
+                $section = array('line' => '', 'byteoffset' => 0, 'index' => 0, 'level' => 0);
+            }
+            $nextSection = null;
+            foreach (($article->exists() ? $article->getParserOutput(new ParserOptions)->getSections() : array()) as $s)
+            {
+                if ($sectionIdx === '0' || $section != null && $s['level'] <= $section['level'])
                 {
                     $nextSection = $s;
                     break;
@@ -83,7 +87,7 @@ HTML
                 }
             }
 
-            $text = mb_substr($article->getContent(), $section['byteoffset']);
+            $text = mb_substr($article->getText(), $section['byteoffset']);
             if ($nextSection != null)
             {
                 $text = mb_substr ($text, 0, $nextSection['byteoffset'] - $section['byteoffset']);
