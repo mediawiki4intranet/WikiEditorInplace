@@ -58,7 +58,6 @@ $(document).ready(function()
 });
 
 window.InplaceEditor = {
-    context: null,
     restoreAll: function()
     {
         $('div.InplaceEditorHTMLHolder').each(function()
@@ -89,19 +88,6 @@ window.InplaceEditor = {
             }
         });
         return false;
-    },
-    addModule: {
-        toolbar: function()
-        {
-            $('#toolbar').remove();
-            $('textarea#wpTextbox1').wikiEditor(
-                'addModule', $.wikiEditor.modules.toolbar.config.getDefaultConfig()
-            );
-        },
-        other: function(name)
-        {
-            $('textarea#wpTextbox1').wikiEditor('addModule', name);
-        }
     },
     showForm: function (result)
     {
@@ -152,20 +138,6 @@ window.InplaceEditor = {
         $editor.find('input[type=submit]').attr('id', 'wpSave');
         var showForm = function()
         {
-            for (var i in window.InplaceEditor.context.modules)
-            {
-                if (i === 'toolbar')
-                {
-                    window.InplaceEditor.addModule.toolbar();
-                }
-                else
-                {
-                    window.InplaceEditor.addModule.other(i);
-                }
-            }
-        };
-        var postShowForm = function()
-        {
             $('#wpTextbox1').wikiEditor();
             $('#editform .wikiEditor-ui-controls').hide();
             $('#editform button.wei-btn-preview').click(window.InplaceEditor.preview);
@@ -175,25 +147,9 @@ window.InplaceEditor = {
             $('.wei-preview-block').append($preview);
             $preview.css({ display: '' });
         };
-        if (window.InplaceEditor.context === null)
-        {
-            mw.loader.using(result.modules, function()
-            {
-                if (window.InplaceEditor.context === null)
-                {
-                    window.InplaceEditor.context = $('#wpTextbox1').data('wikiEditor-context');
-                }
-                else
-                {
-                    showForm();
-                }
-                postShowForm();
-            });
-        }
-        else
+        mw.loader.using(result.modules, function()
         {
             showForm();
-            postShowForm();
-        }
+        });
     }
 };
