@@ -22,6 +22,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/**
+ * TODO:
+ * - Drafts compatibility
+ * - Fix mid-air collisions, especially with newly added sections
+ * - Confirm closing inplace editor when there are modifications
+ */
+
 $wgExtensionCredits['other'][] = array(
 	'name'        => 'WikiEditorInplace',
 	'author'      => 'Vladimir Koptev, Vitaliy Filippov',
