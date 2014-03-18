@@ -62,16 +62,9 @@ window.InplaceEditor = {
     {
         $('div.InplaceEditorHTMLHolder').each(function()
         {
-            var $div = $(this);
-            $div.next().remove();
-            var $current = null;
-            var $prev = $div;
-            $div.children().each(function() {
-                $current = $(this);
-                $prev.after($current);
-                $prev = $current;
-            });
-            $div.remove();
+            $(this).next().remove();
+            $(this).after($(this).contents());
+            $(this).remove();
         });
         return false;
     },
@@ -92,7 +85,6 @@ window.InplaceEditor = {
     showForm: function (result)
     {
         window.InplaceEditor.restoreAll();
-        var $div = $('<div></div>');
         var $first = null;
         $('span.mw-headline').each(function()
         {
@@ -101,26 +93,24 @@ window.InplaceEditor = {
                 $first = $(this).parent();
             }
         });
-        $first.before($div);
-        $div.hide();
-        $div.attr('id', 'block_' + result.from);
-        $div.addClass('InplaceEditorHTMLHolder');
+        var div = document.createElement('DIV');
+        div.style.display = 'none';
+        div.id = 'block_' + result.from
+        div.className = 'InplaceEditorHTMLHolder';
+        $first.before(div);
 
-        var $current = $first.next();
-        $div.append($first);
-        var i = 0;
-        while ($current.length > 0 && (result.to == null || $current.children('span.mw-headline').attr('id') != result.to))
+        var current = $first[0], next;
+        while (current.nextSibling && (result.to == null || $(current.nextSibling).children('span.mw-headline').attr('id') != result.to))
         {
-            var $next = $current.next();
-            $div.append($current);
-            $current = $next;
+            next = current.nextSibling;
+            div.appendChild(current);
+            current = next;
         }
 
-        var $editor = $('<div></div>');
-        $div.after($editor);
+        var $editor = $('<div>'+$('#wei-form-origin').html()+'</div>');
         $editor.addClass('wei-block');
-        $editor.html($('#wei-form-origin').html());
         $editor.children('a').first().attr('id', 'wei-' + result.section);
+        $(div).after($editor);
         window.location.hash = '#wei-' + result.section;
 
         var $form = $editor.find('form');
