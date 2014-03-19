@@ -100,7 +100,7 @@ window.InplaceEditor = {
         $first.before(div);
 
         var current = $first[0], next;
-        while (current.nextSibling && (result.to == null || $(current.nextSibling).children('span.mw-headline').attr('id') != result.to))
+        while (current && (result.to == null || $(current).children('span.mw-headline').attr('id') != result.to))
         {
             next = current.nextSibling;
             div.appendChild(current);
