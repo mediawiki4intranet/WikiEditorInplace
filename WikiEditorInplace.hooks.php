@@ -60,13 +60,6 @@ HTML
         return true;
     }
 
-    protected static function escapeId($text)
-    {
-        $text = preg_replace('/<.*?>/', '', $text);
-        $text = Sanitizer::normalizeSectionNameWhitespace($text);
-        return Sanitizer::escapeId($text, array('noninitial'));
-    }
-
     public static function Ajax($pagename, $sectionIdx)
     {
         global $wgUser;
@@ -95,9 +88,9 @@ HTML
             {
                 $text = mb_substr ($text, 0, $nextSection['byteoffset'] - $section['byteoffset']);
             }
-            $from = self::escapeId($section['line']);
+            $from = $section['anchor'];
 
-            $to = ($nextSection === null ? null : self::escapeId($nextSection['line']));
+            $to = ($nextSection === null ? null : $nextSection['anchor']);
 
             $result = array(
                 'text' => $text,
