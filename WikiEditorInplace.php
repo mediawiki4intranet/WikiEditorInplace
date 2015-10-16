@@ -40,7 +40,6 @@ $wgExtensionCredits['other'][] = array(
 $wgResourceModules['WikiEditorInplace'] = array(
 	'scripts'       => array('WikiEditorInplace.js'),
 	'styles'        => array('WikiEditorInplace.css'),
-	'dependencies'  => array('jquery'),
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'WikiEditorInplace',
 	'position'      => 'top',

@@ -4,18 +4,19 @@ class WikiEditorInplace
 {
     public static function getPreferences($user, &$prefs)
     {
+        global $wgVersion;
         $prefs['wikieditor-inplace'] = array(
             'type' => 'toggle',
             'label-message' => 'wei-enable',
-            'section' => 'editing/beta',
+            'section' => 'editing/'.(version_compare($wgVersion, '1.23', '>=') ? 'labs' : 'beta'),
         );
         return true;
     }
 
-    public static function getFeaturesModulesList()
+    public static function getFeaturesModulesList($editPage)
     {
         global $wgOut;
-        WikiEditorHooks::editPageShowEditFormInitial($toolbar);
+        WikiEditorHooks::editPageShowEditFormInitial($editPage, $wgOut);
         return $wgOut->getModules();
     }
 
@@ -37,7 +38,7 @@ class WikiEditorInplace
             $cancel = wfMsg('wei-cancel');
 
             $wgOut->addHtml(<<<HTML
-<div id="wei-form-origin">
+<div id="wei-form-origin" style="display: none">
     <a id=""></a>
     <div class="wei-editor-block">
         <div>
@@ -67,10 +68,10 @@ HTML
         $result = array();
         if ($title->userCan('edit'))
         {
-            $article = new WikiPage($title);
+            $article = new Article($title);
             $section = null;
             $nextSection = null;
-            foreach (($article->exists() ? $article->getParserOutput(new ParserOptions)->getSections() : array()) as $s)
+            foreach (($article->exists() ? $article->getParserOutput()->getSections() : array()) as $s)
             {
                 if ($section != null && $s['level'] <= $section['level'])
                 {
@@ -96,7 +97,7 @@ HTML
                 'text' => $text,
                 'from' => $from,
                 'to'   => $to,
-                'modules' => self::getFeaturesModulesList(),
+                'modules' => self::getFeaturesModulesList(new EditPage($article)),
                 'section' => $section['index'],
                 'token' => $wgUser->getEditToken(),
                 'edittime' => $article->getTimestamp(),

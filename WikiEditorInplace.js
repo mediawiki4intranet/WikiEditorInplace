@@ -17,17 +17,16 @@ $(document).ready(function()
             data: {
                 action: 'ajax',
                 rs: 'WikiEditorInplace::Ajax',
-                rsargs: [ wgPageName, section ]
+                rsargs: [ mw.config.get('wgPageName'), section ]
             },
             dataType: 'json',
             success: function(result)
             {
                 window.InplaceEditor.showForm(result);
-                loading = null;
             }
         });
     }
-    $('.editsection > a').click(function(e)
+    $('.editsection > a, .mw-editsection > a').click(function(e)
     {
         var href = $(this).attr('href');
         // skip inplace editing for sections included from templates, like T-(\d+)
@@ -95,7 +94,7 @@ window.InplaceEditor = {
         });
         var div = document.createElement('DIV');
         div.style.display = 'none';
-        div.id = 'block_' + result.from
+        div.id = 'block_' + result.from;
         div.className = 'InplaceEditorHTMLHolder';
         $first.before(div);
 
