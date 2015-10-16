@@ -11,6 +11,11 @@ $(document).ready(function()
             // To prevent double loading via #hash
             return;
         }
+        if (!window.InplaceEditor.restoreAll())
+        {
+            // Ask for a confirmation
+            return;
+        }
         $.ajax({
             type: "POST",
             url: mw.util.wikiScript(),
@@ -56,16 +61,20 @@ $(document).ready(function()
     }
 });
 
-window.InplaceEditor = {
+window.InplaceEditor =
+{
     restoreAll: function()
     {
-        $('div.InplaceEditorHTMLHolder').each(function()
+        var d = $('div.InplaceEditorHTMLHolder');
+        var t = d.next().find('textarea')[0];
+        if (t && t.value != t._origText && !confirm(mw.msg('wei-confirm-close')))
         {
-            $(this).next().remove();
-            $(this).after($(this).contents());
-            $(this).remove();
-        });
-        return false;
+            return false;
+        }
+        d.next().remove();
+        d.after(d.contents());
+        d.remove();
+        return true;
     },
     preview: function()
     {
@@ -83,7 +92,6 @@ window.InplaceEditor = {
     },
     showForm: function (result)
     {
-        window.InplaceEditor.restoreAll();
         var $first = null;
         $('span.mw-headline').each(function()
         {
@@ -122,15 +130,16 @@ window.InplaceEditor = {
         $form.attr('id', 'editform');
         $form.attr('action', result.formAction);
 
-        $editor.find('textarea').text(result.text);
-        $editor.find('textarea').attr('id', 'wpTextbox1');
+        $input = $editor.find('textarea')[0];
+        $input.value = $input._origText = result.text;
+        $input.id = 'wpTextbox1';
         $editor.find('input[type=submit]').attr('id', 'wpSave');
-        var showForm = function()
+        var doShowForm = function()
         {
             $('#wpTextbox1').wikiEditor();
             $('#editform .wikiEditor-ui-controls').hide();
             $('#editform button.wei-btn-preview').click(window.InplaceEditor.preview);
-            $('#editform button.wei-btn-cancel').click(window.InplaceEditor.restoreAll);
+            $('#editform button.wei-btn-cancel').click(function() { window.InplaceEditor.restoreAll(); return false; });
             $('.wei-preview-block').html('');
             var $preview = $('#editform .wikiEditor-ui-view.wikiEditor-ui-view-preview');
             $('.wei-preview-block').append($preview);
@@ -138,7 +147,7 @@ window.InplaceEditor = {
         };
         mw.loader.using(result.modules, function()
         {
-            showForm();
+            doShowForm();
         });
     }
 };

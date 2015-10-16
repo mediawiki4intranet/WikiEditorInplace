@@ -26,7 +26,6 @@
  * TODO:
  * - Drafts compatibility
  * - Fix mid-air collisions, especially with newly added sections
- * - Confirm closing inplace editor when there are modifications
  */
 
 $wgExtensionCredits['other'][] = array(
@@ -43,6 +42,9 @@ $wgResourceModules['WikiEditorInplace'] = array(
 	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'WikiEditorInplace',
 	'position'      => 'top',
+	'messages'      => [
+		'wei-confirm-close'
+	],
 );
 $wgExtensionMessagesFiles['WikiEditorInplace'] = __DIR__ . '/WikiEditorInplace.i18n.php';
 $wgAutoloadClasses['WikiEditorInplace'] = __DIR__ . '/WikiEditorInplace.hooks.php';
