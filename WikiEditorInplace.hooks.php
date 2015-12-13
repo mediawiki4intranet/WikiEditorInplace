@@ -63,7 +63,7 @@ HTML
 
     public static function Ajax($pagename, $sectionIdx)
     {
-        global $wgUser;
+        global $wgUser, $wgOut;
         $title = Title::newFromText($pagename);
         $result = array();
         if ($title->userCan('edit'))
@@ -93,11 +93,13 @@ HTML
 
             $to = ($nextSection === null ? null : $nextSection['anchor']);
 
+            $oldConf = $wgOut->getJsConfigVars();
             $result = array(
                 'text' => $text,
                 'from' => $from,
                 'to'   => $to,
                 'modules' => self::getFeaturesModulesList(new EditPage($article)),
+                'configs' => array_diff_assoc($wgOut->getJsConfigVars(), $oldConf),
                 'section' => $section['index'],
                 'token' => $wgUser->getEditToken(),
                 'edittime' => $article->getTimestamp(),

@@ -145,6 +145,7 @@ window.InplaceEditor =
             $('.wei-preview-block').append($preview);
             $preview.css({ display: '' });
         };
+        mw.config.set(result.configs);
         mw.loader.using(result.modules, function()
         {
             doShowForm();
