@@ -26,7 +26,7 @@ class WikiEditorInplace
      * @param type $outputDone
      * @param type $pcache
      */
-    public static function ArticleViewHeader(&$article, &$outputDone, &$pcache)
+    public static function ArticleViewHeader($article, &$outputDone, &$pcache)
     {
         global $wgOut, $wgUser;
         $title = $article->getTitle();
