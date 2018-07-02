@@ -45,9 +45,9 @@ class WikiEditorInplace
             <form enctype="multipart/form-data" method="post" name="editform" action="">
                 <textarea lang="ru" name="wpTextbox1" dir="ltr" style="" rows="25" cols="80" accesskey="," tabindex="1"></textarea>
                 <div class="wei-editor-buttons">
-                    <input type="submit" accesskey="s" value="$submit" name="wpSave">
-                    <button class="wei-btn-preview">$preview</button>
-                    <button class="wei-btn-cancel">$cancel</button>
+                    <input tabindex="1" type="submit" accesskey="s" value="$submit" name="wpSave">
+                    <button tabindex="1" class="wei-btn-preview">$preview</button>
+                    <button tabindex="1" class="wei-btn-cancel">$cancel</button>
                 </div>
             </form>
         </div>
